@@ -1,0 +1,45 @@
+# config.yaml
+# Central configuration for the ETA Prediction Pipeline (Week 1 - Data Ingestion & Feature Engineering)
+
+paths:
+  raw_data_dir: "data/raw"
+  raw_data_file: "train.csv"          # Place the Kaggle NYC Taxi Trip Duration file here as train.csv
+  processed_data_dir: "data/processed"
+  versions_dir: "data/versions"
+  version_manifest: "data/versions/manifest.json"
+  logs_dir: "logs"
+
+schema:
+  required_columns:
+    - id
+    - vendor_id
+    - pickup_datetime
+    - dropoff_datetime
+    - passenger_count
+    - pickup_longitude
+    - pickup_latitude
+    - dropoff_longitude
+    - dropoff_latitude
+    - store_and_fwd_flag
+    - trip_duration
+
+validation:
+  # New York City rough bounding box (used to flag bad/missing GPS pings)
+  nyc_lat_min: 40.4
+  nyc_lat_max: 41.0
+  nyc_lon_min: -74.3
+  nyc_lon_max: -73.6
+  min_trip_duration_sec: 30
+  max_trip_duration_sec: 21600      # 6 hours - anything beyond this is treated as an outlier/error
+  max_passenger_count: 6
+
+synthetic_fallback:
+  enabled: true
+  n_rows: 5000
+  seed: 42
+
+split:
+  method: "time"        # "time" (recommended for ETA/forecasting) or "random"
+  test_size: 0.2
+  random_state: 42
+  location_bins: 10     # grid bins per lat/lon axis, fit on train only

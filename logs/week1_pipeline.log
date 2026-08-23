@@ -1,0 +1,19 @@
+2026-08-23 09:01:52,256 | INFO | main_week1 | STEP 1/5: Ingesting raw trip data
+2026-08-23 09:01:52,256 | WARNING | src.data_ingestion | Raw data file not found at /home/claude/eta_prediction_pipeline/data/raw/train.csv -- generating synthetic data instead.
+2026-08-23 09:01:52,275 | WARNING | src.data_ingestion | Using SYNTHETIC fallback data (5000 rows). Place the real Kaggle NYC Taxi Trip Duration CSV at data/raw/train.csv to use real data.
+2026-08-23 09:01:52,275 | INFO | main_week1 | STEP 2/5: Validating schema and cleaning data
+2026-08-23 09:01:52,276 | INFO | src.schema_validation | Schema check passed: all 11 required columns present.
+2026-08-23 09:01:52,311 | INFO | src.schema_validation | Validation complete: 25/5000 rows dropped (0.50%). GPS=8, timestamps=17, passengers=0
+2026-08-23 09:01:52,311 | INFO | main_week1 | STEP 3/5: Splitting into train/test
+2026-08-23 09:01:52,313 | INFO | src.data_split | Time-based split: train=3980 rows (up to 2016-05-24 12:27:34), test=995 rows (from 2016-05-24 12:47:30)
+2026-08-23 09:01:52,314 | INFO | main_week1 | STEP 4/5: Engineering features (fit on train, apply to test)
+2026-08-23 09:01:52,345 | INFO | src.feature_engineering | Fitted new location bin edges from this dataframe (expected: train split only).
+2026-08-23 09:01:52,352 | INFO | src.feature_engineering | Feature engineering complete. Columns now: ['id', 'vendor_id', 'pickup_datetime', 'dropoff_datetime', 'passenger_count', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude', 'store_and_fwd_flag', 'trip_duration', 'trip_date', 'temp_c', 'precip_mm', 'weather_condition', 'hour_of_day', 'day_of_week', 'is_weekend', 'month', 'is_rush_hour', 'trip_distance_km', 'pickup_lat_bin', 'pickup_lon_bin', 'dropoff_lat_bin', 'dropoff_lon_bin']
+2026-08-23 09:01:52,358 | INFO | src.feature_engineering | Applying pre-fitted location bin edges (expected: test split).
+2026-08-23 09:01:52,362 | INFO | src.feature_engineering | Feature engineering complete. Columns now: ['id', 'vendor_id', 'pickup_datetime', 'dropoff_datetime', 'passenger_count', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude', 'store_and_fwd_flag', 'trip_duration', 'trip_date', 'temp_c', 'precip_mm', 'weather_condition', 'hour_of_day', 'day_of_week', 'is_weekend', 'month', 'is_rush_hour', 'trip_distance_km', 'pickup_lat_bin', 'pickup_lon_bin', 'dropoff_lat_bin', 'dropoff_lon_bin']
+2026-08-23 09:01:52,404 | INFO | main_week1 | Train features saved to /home/claude/eta_prediction_pipeline/data/processed/trips_features_train.parquet (3980 rows, 25 cols)
+2026-08-23 09:01:52,404 | INFO | main_week1 | Test features saved to /home/claude/eta_prediction_pipeline/data/processed/trips_features_test.parquet (995 rows, 25 cols)
+2026-08-23 09:01:52,404 | INFO | main_week1 | Location bin edges (fit on train) saved to /home/claude/eta_prediction_pipeline/data/processed/location_bin_edges.json
+2026-08-23 09:01:52,404 | INFO | main_week1 | STEP 5/5: Versioning datasets
+2026-08-23 09:01:52,420 | INFO | src.data_versioning | Saved dataset version v_20260823T090152Z_eda8f28608c6b63a (3980 rows) to /home/claude/eta_prediction_pipeline/data/versions/v_20260823T090152Z_eda8f28608c6b63a.parquet
+2026-08-23 09:01:52,435 | INFO | src.data_versioning | Saved dataset version v_20260823T090152Z_9b7e68f9712741a2 (995 rows) to /home/claude/eta_prediction_pipeline/data/versions/v_20260823T090152Z_9b7e68f9712741a2.parquet
