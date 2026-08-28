@@ -182,6 +182,26 @@ class ModelComparisonResult:
 
 # ----------------------------- Single model trainer -----------------------------
 
+def _n_iter_for_space(search_space: Dict) -> int:
+    """
+    Number of RandomizedSearchCV trials to run for a given search space.
+
+    When every hyperparameter is a finite list (no scipy distribution),
+    random sampling can skip options entirely by bad luck - e.g. a 2-way
+    toggle like linear_regression's {"fit_intercept": [True, False]} has
+    only a 50% chance of ever trying both values at n_iter=1. In that case,
+    try every combination (capped at HP_SEARCH_ITER) instead of sampling.
+    Any space with a continuous distribution falls back to HP_SEARCH_ITER
+    random samples, since its combinations aren't finite to enumerate.
+    """
+    total_combinations = 1
+    for values in search_space.values():
+        if not isinstance(values, list):
+            return config.HP_SEARCH_ITER
+        total_combinations *= len(values)
+    return min(total_combinations, config.HP_SEARCH_ITER)
+
+
 def _train_one_model(
     name:            str,
     model:           Any,
@@ -201,7 +221,7 @@ def _train_one_model(
     t0 = time.perf_counter()
 
     feature_names = X_train.columns.tolist()
-    n_iter = config.HP_SEARCH_ITER if len(search_space) > 1 else 1
+    n_iter = _n_iter_for_space(search_space)
 
     search = RandomizedSearchCV(
         estimator=model,
@@ -410,8 +430,8 @@ def train_all_models(
     lb_path = _plot_leaderboard(leaderboard)
     mlflow.log_artifact(lb_path, artifact_path="leaderboard")
 
-    # --- Pick champion: lowest val_rmse ---
-    champion = min(results, key=lambda r: r.val_metrics["val_mae"])
+    # --- Pick champion: lowest value of config.CHAMPION_METRIC ---
+    champion = min(results, key=lambda r: r.val_metrics[config.CHAMPION_METRIC])
     log.info(f"\nChampion model: {champion.name} (val_rmse={champion.val_rmse:.4f})")
 
     # --- Evaluate champion once on the held-out test split ---

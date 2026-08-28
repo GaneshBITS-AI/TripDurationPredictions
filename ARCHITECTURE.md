@@ -94,7 +94,7 @@ Each tuned model runs `RandomizedSearchCV` with `n_iter=HP_SEARCH_ITER` × `cv=H
 |---|---|---|
 | `fit_intercept` | `[True, False]` | The only tuning knob a plain OLS model has (no regularization, no depth). |
 
-> **Known issue** — because this space has only *one key* (`fit_intercept`), `_train_one_model()`'s `n_iter = HP_SEARCH_ITER if len(search_space) > 1 else 1` collapses to `n_iter=1`, meaning `RandomizedSearchCV` samples **one** random value out of `{True, False}` instead of trying both. In the latest run it happened to land on `fit_intercept=False`, producing a badly negative val R² (**-1.04**) — worse than predicting the mean — because the engineered feature set isn't centered. This makes the "baseline" comparison currently misleading rather than genuinely a floor. Fix: use `n_iter=min(HP_SEARCH_ITER, len(all combinations))` or just always try every value for discrete grids this small. Not fixed as part of this document — flagged for a follow-up.
+> **Fixed** — this space has only *one key* (`fit_intercept`), so the old `n_iter = HP_SEARCH_ITER if len(search_space) > 1 else 1` rule collapsed to `n_iter=1`, meaning `RandomizedSearchCV` sampled **one** random value out of `{True, False}` instead of trying both. The run behind the numbers above happened to land on `fit_intercept=False`, producing a badly negative val R² (**-1.04**) — worse than predicting the mean — because the engineered feature set isn't centered. Replaced with `_n_iter_for_space()`: when every hyperparameter is a finite list (no scipy distribution), it tries every combination (capped at `HP_SEARCH_ITER`) instead of randomly sampling a subset that can skip options entirely; spaces with a continuous distribution are unaffected and still draw `HP_SEARCH_ITER` random samples. Verified `fit_intercept` now tries both `True` and `False`. The table numbers above are from before this fix and will change on the next `python main.py` run.
 
 ### 5.2 Decision Tree — fast single-tree baseline
 
@@ -163,7 +163,7 @@ Each tuned model runs `RandomizedSearchCV` with `n_iter=HP_SEARCH_ITER` × `cv=H
 | Decision Tree | 5.56 | 3.70 | 0.725 | 28.8 s |
 | Linear Regression | 15.13 | 13.92 | -1.04 | 7.9 s |
 
-> **Known issue** — the champion is currently selected by `min(results, key=lambda r: r.val_metrics["val_mae"])` in `train_all_models()`, i.e. **lowest val MAE**, while `config.CHAMPION_METRIC = "val_rmse"` documents the intent as RMSE-based selection. On the latest run both metrics agree on XGBoost as champion, but the two are not guaranteed to agree in general — flagged as an inconsistency to fix (either change the `min()` key to `val_rmse`, or update `CHAMPION_METRIC` to reflect what the code actually does).
+> **Fixed** — the champion used to be selected by `min(results, key=lambda r: r.val_metrics["val_mae"])` in `train_all_models()`, i.e. **lowest val MAE**, while `config.CHAMPION_METRIC = "val_rmse"` documented the intent as RMSE-based selection. On the run behind these numbers both metrics agreed on XGBoost, but they aren't guaranteed to agree in general. Changed to `min(results, key=lambda r: r.val_metrics[config.CHAMPION_METRIC])`, so champion selection now genuinely follows the configured metric.
 
 ---
 
@@ -197,10 +197,11 @@ Each tuned model runs `RandomizedSearchCV` with `n_iter=HP_SEARCH_ITER` × `cv=H
 
 ## 8. Known Limitations / Follow-ups
 
-1. **Linear Regression's `n_iter=1` collapse** (§5.1) — the baseline model doesn't actually search both `fit_intercept` values, producing a misleadingly bad baseline on some runs.
-2. **Champion selection metric mismatch** (§5.6) — code picks by `val_mae`, config declares `val_rmse`.
+1. ~~Linear Regression's `n_iter=1` collapse~~ — **fixed**, see §5.1.
+2. ~~Champion selection metric mismatch~~ — **fixed**, see §5.6.
 3. **Repo size growth** — `mlruns/` and `data/processed/versioned/` are now git-tracked (per request, for audit/reproducibility); every future `python main.py` run adds a new run + dataset version to the next commit, and being binary content, this only grows the repo, never shrinks it without a history rewrite.
 4. **Weather auto-lookup not implemented at serving time** — `TripInput` defaults missing weather fields to 0 rather than looking up the actual date's weather, since no `weather_data_nyc.csv` is present in this environment.
+5. **Leaderboard numbers in this document predate the §5.1/§5.6 fixes** — re-run `python main.py` to refresh them; Linear Regression's val R² should no longer be as badly negative once both `fit_intercept` options are actually compared.
 
 ---
 
