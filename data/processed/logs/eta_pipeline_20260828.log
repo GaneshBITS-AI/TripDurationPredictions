@@ -1512,3 +1512,227 @@ Champion model: gradient_boosting (val_rmse=4.7281)
 2026-08-28 20:16:27 | eta_pipeline.feature_engineering | INFO     |   + pickup_grid_x
 2026-08-28 20:16:27 | eta_pipeline.feature_engineering | INFO     |   + pickup_grid_y
 2026-08-28 20:16:29 | eta_pipeline.serving.api | INFO     | Predicted ETA=54.76 min (1910.82 ms) pickup=(40.7549,-73.984) dropoff=(40.6413,-73.7781)
+2026-08-28 21:46:08 | eta_pipeline.mlflow_tracking | INFO     | MLFlow tracking URI: sqlite:///C:\Users\Ganesh\TripDurationPredictions\mlruns\mlflow.db
+2026-08-28 21:46:09 | eta_pipeline.mlflow_tracking | INFO     | Experiment eta-prediction-pipeline already exists
+2026-08-28 21:46:09 | main | INFO     | ================================================================
+2026-08-28 21:46:09 | main | INFO     | Title: ETA Prediction Pipeline - NYC Taxi(Kaggle)
+2026-08-28 21:46:09 | main | INFO     | ================================================================
+2026-08-28 21:46:09 | main | INFO     | MLflow Experiment started: eta-prediction-pipeline
+2026-08-28 21:46:09 | main | INFO     | MLflow store: sqlite:///C:\Users\Ganesh\TripDurationPredictions\mlruns\mlflow.db
+2026-08-28 21:46:10 | eta_pipeline.mlflow_tracking | INFO     | MLflow parent run started: 2eb130ad7bd74b62987e556d77fbf049
+2026-08-28 21:46:10 | main | INFO     | ================================================================
+2026-08-28 21:46:10 | main | INFO     | Title: STAGE 1 - LOAD NYC TAXI + WEATHER DATA & VALIDATION
+2026-08-28 21:46:10 | main | INFO     | ================================================================
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | Loading Kaggle NYC Taxi dataset from: C:\Users\Ganesh\TripDurationPredictions\data\raw\NYC.csv
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | Raw dataset shape: (100000, 11)
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | Raw columns: ['id', 'vendor_id', 'pickup_datetime', 'dropoff_datetime', 'passenger_count', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude', 'store_and_fwd_flag', 'trip_duration']
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | Derived eta_minutes from trip_duration_sec.
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | Post-mapping shape: (100000, 12)
+2026-08-28 21:46:10 | eta_pipeline.ingestion | WARNING  | Weather file not found at: C:\Users\Ganesh\TripDurationPredictions\data\raw\weather_data_nyc.csv — trips will proceed without weather features.
+2026-08-28 21:46:10 | eta_pipeline.ingestion | WARNING  | Weather DataFrame is empty — skipping merge. Weather features will be 0.
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | Starting validation on 100,000 rows …
+2026-08-28 21:46:10 | eta_pipeline.ingestion | WARNING  | Out-of-range GPS coordinates in 94 rows.
+2026-08-28 21:46:10 | eta_pipeline.ingestion | WARNING  | Invalid ETA values in 135 rows.
+2026-08-28 21:46:10 | eta_pipeline.ingestion | WARNING  | Invalid passenger counts in 1 rows.
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | ============================================================
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | VALIDATION REPORT
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | ============================================================
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Total rows              :    100,000
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Missing GPS rows        :          0
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Invalid timestamp rows  :          0
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Out-of-range rows       :         94
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Invalid ETA rows        :        135
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Invalid passenger rows  :          1
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Duplicate trip IDs      :          0
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Quarantined rows        :        229
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Clean rows              :     99,771
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     |   Pass rate               :     99.77%
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | ============================================================
+2026-08-28 21:46:10 | eta_pipeline.ingestion | INFO     | Saved clean (99,771 rows) and quarantine (229 rows).
+2026-08-28 21:46:10 | eta_pipeline.mlflow_tracking | INFO     | log ingestion metrics completed
+2026-08-28 21:46:10 | main | INFO     | Ingestion complete: 99,771 clean rows (99.8% pass rate).
+2026-08-28 21:46:10 | main | INFO     | ================================================================
+2026-08-28 21:46:10 | main | INFO     | Title: STAGE 2 - EXPLORATORY DATA ANALYSIS
+2026-08-28 21:46:10 | main | INFO     | ================================================================
+2026-08-28 21:46:12 | eta_pipeline.eda | INFO     | ============================================================
+2026-08-28 21:46:12 | eta_pipeline.eda | INFO     | STARTING EDA
+2026-08-28 21:46:12 | eta_pipeline.eda | INFO     | ============================================================
+2026-08-28 21:46:12 | eta_pipeline.eda | INFO     | Dataset shape : 99,771 rows x 15 columns
+2026-08-28 21:46:12 | eta_pipeline.eda | INFO     | Target skewness  : 2.191
+2026-08-28 21:46:12 | eta_pipeline.eda | INFO     | Target kurtosis  : 7.839
+2026-08-28 21:46:12 | eta_pipeline.eda | INFO     | No missing values in clean dataset.
+2026-08-28 21:46:12 | eta_pipeline.eda | INFO     | Generating plots ...
+2026-08-28 21:46:12 | eta_pipeline.eda | INFO     | Saved: 01_target_distribution.png
+2026-08-28 21:46:14 | eta_pipeline.eda | INFO     | Saved: 02_numeric_distributions.png
+2026-08-28 21:46:14 | eta_pipeline.eda | INFO     | Saved: 03_categorical_distributions.png
+2026-08-28 21:46:15 | eta_pipeline.eda | INFO     | Saved: 04_correlation_heatmap.png
+2026-08-28 21:46:15 | eta_pipeline.eda | INFO     | Saved: 05_eta_vs_distance.png
+2026-08-28 21:46:16 | eta_pipeline.eda | INFO     | Saved: 06_temporal_patterns.png
+2026-08-28 21:46:16 | eta_pipeline.eda | INFO     | Saved: 07_weather_traffic_eta.png
+2026-08-28 21:46:16 | eta_pipeline.eda | INFO     | Saved: 08_pickup_density.png
+2026-08-28 21:46:16 | eta_pipeline.eda | INFO     | Saved: 09_boxplot_eta_by_hour.png
+2026-08-28 21:46:16 | eta_pipeline.eda | INFO     | Summary stats saved: C:\Users\Ganesh\TripDurationPredictions\data\processed\report\eda\summary_stats.json
+2026-08-28 21:46:16 | eta_pipeline.eda | INFO     | EDA complete. All outputs in: C:\Users\Ganesh\TripDurationPredictions\data\processed\report\eda
+2026-08-28 21:46:16 | eta_pipeline.mlflow_tracking | INFO     | log_eda_summary completed
+2026-08-28 21:46:16 | eta_pipeline.mlflow_tracking | INFO     | Logged EDA artifacts to MLflow.
+2026-08-28 21:46:16 | main | INFO     | EDA complete - target mean ETA: 13.9 min
+2026-08-28 21:46:16 | main | INFO     | ================================================================
+2026-08-28 21:46:16 | main | INFO     | Title: STAGE 3 - PREPROCESSING  (split -> engineer -> encode -> scale)
+2026-08-28 21:46:16 | main | INFO     | ================================================================
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | ============================================================
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | PREPROCESSING PIPELINE  (split -> engineer -> encode -> scale)
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | ============================================================
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | Input dataset SHA-256: e00d9139aa37fc2b
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | Raw split sizes -> train: 69,839 | val: 9,977 | test: 19,955
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | Applying feature engineering to train split ...
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | ============================================================
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | STARTING FEATURE ENGINEERING
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | ============================================================
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | Feature engineering complete. 25 new features added.
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + bearing_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + bearing_deg
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + bearing_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + day_of_week
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + delta_lat
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + delta_lon
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dow_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dow_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dropoff_grid_x
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dropoff_grid_y
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + haversine_km
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + hour_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + hour_of_day
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + hour_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_raining
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_rush_hour
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_snowing
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_weekend
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + log_haversine_km
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + month
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + month_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + month_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + part_of_day
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + pickup_grid_x
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + pickup_grid_y
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | Applying feature engineering to val split ...
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | ============================================================
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | STARTING FEATURE ENGINEERING
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | ============================================================
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | Feature engineering complete. 25 new features added.
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + bearing_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + bearing_deg
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + bearing_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + day_of_week
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + delta_lat
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + delta_lon
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dow_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dow_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dropoff_grid_x
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dropoff_grid_y
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + haversine_km
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + hour_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + hour_of_day
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + hour_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_raining
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_rush_hour
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_snowing
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_weekend
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + log_haversine_km
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + month
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + month_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + month_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + part_of_day
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + pickup_grid_x
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + pickup_grid_y
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | Applying feature engineering to test split ...
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | ============================================================
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | STARTING FEATURE ENGINEERING
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | ============================================================
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     | Feature engineering complete. 25 new features added.
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + bearing_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + bearing_deg
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + bearing_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + day_of_week
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + delta_lat
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + delta_lon
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dow_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dow_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dropoff_grid_x
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + dropoff_grid_y
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + haversine_km
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + hour_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + hour_of_day
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + hour_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_raining
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_rush_hour
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_snowing
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + is_weekend
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + log_haversine_km
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + month
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + month_cos
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + month_sin
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + part_of_day
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + pickup_grid_x
+2026-08-28 21:46:17 | eta_pipeline.feature_engineering | INFO     |   + pickup_grid_y
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | Numeric features    : 34
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | Categorical features: 0
+2026-08-28 21:46:17 | eta_pipeline.preprocessing | INFO     | No NaNs in numeric features - imputation skipped.
+2026-08-28 21:46:18 | eta_pipeline.preprocessing | INFO     | StandardScaler fitted on train -> applied to val/test: 34 cols
+2026-08-28 21:46:18 | eta_pipeline.preprocessing | INFO     | Dataset version 'v6' persisted at C:\Users\Ganesh\TripDurationPredictions\data\processed\versioned\v6
+2026-08-28 21:46:18 | eta_pipeline.preprocessing | INFO     | Preprocessing complete.
+2026-08-28 21:46:18 | eta_pipeline.mlflow_tracking | INFO     | Logged preprocessing params to MLflow.
+2026-08-28 21:46:18 | eta_pipeline.mlflow_tracking | INFO     | Logged dataset artifacts for version 'v6' to MLflow.
+2026-08-28 21:46:18 | main | INFO     | Preprocessing complete - dataset version: v6
+2026-08-28 21:46:18 | main | INFO     | Splits - train: 69,839 | val: 9,977 | test: 19,955
+2026-08-28 21:46:18 | main | INFO     | Feature count after engineering: 34
+2026-08-28 21:46:18 | main | INFO     | ================================================================
+2026-08-28 21:46:18 | main | INFO     | Title: STAGE 4 - MODEL TRAINING, COMPARISON & MODEL REGISTRY
+2026-08-28 21:46:18 | main | INFO     | ================================================================
+2026-08-28 21:46:18 | eta_pipeline.model_training | INFO     | ============================================================
+2026-08-28 21:46:18 | eta_pipeline.model_training | INFO     | STAGE 5 - MODEL TRAINING & EXPERIMENT TRACKING
+2026-08-28 21:46:18 | eta_pipeline.model_training | INFO     | ============================================================
+2026-08-28 21:46:18 | eta_pipeline.model_training | INFO     |   Tuning: linear_regression  (12 iterations x 3-fold CV) ...
+2026-08-28 21:46:23 | eta_pipeline.model_training | INFO     |     Best params: {'fit_intercept': True}
+2026-08-28 21:46:23 | eta_pipeline.model_training | INFO     |     linear_regression | cv_rmse=6.223  val_rmse=6.012  val_r2=0.679  (4.9s)
+2026-08-28 21:46:44 | eta_pipeline.model_training | INFO     |   Tuning: decision_tree  (12 iterations x 3-fold CV) ...
+2026-08-28 21:46:51 | eta_pipeline.model_training | INFO     |     Best params: {'ccp_alpha': np.float64(0.006116531604882809), 'max_depth': 20, 'max_features': 0.5, 'min_samples_leaf': 17, 'min_samples_split': 11}
+2026-08-28 21:46:51 | eta_pipeline.model_training | INFO     |     decision_tree | cv_rmse=5.822  val_rmse=5.560  val_r2=0.725  (7.4s)
+2026-08-28 21:47:02 | eta_pipeline.model_training | INFO     |   Tuning: gradient_boosting  (12 iterations x 3-fold CV) ...
+2026-08-28 21:47:42 | eta_pipeline.model_training | INFO     |     Best params: {'l2_regularization': np.float64(0.388677289689482), 'learning_rate': np.float64(0.061556316037040225), 'max_depth': 12, 'max_iter': 379, 'max_leaf_nodes': 40, 'min_samples_leaf': 34}
+2026-08-28 21:47:43 | eta_pipeline.model_training | INFO     |     gradient_boosting | cv_rmse=4.997  val_rmse=4.728  val_r2=0.801  (40.3s)
+2026-08-28 21:47:53 | eta_pipeline.model_training | INFO     |   Tuning: xgboost  (12 iterations x 3-fold CV) ...
+2026-08-28 21:49:53 | eta_pipeline.model_training | INFO     |     Best params: {'colsample_bytree': np.float64(0.7125779372456224), 'learning_rate': np.float64(0.04950891594495588), 'max_depth': 6, 'n_estimators': 509, 'reg_alpha': np.float64(0.03131329245555858), 'reg_lambda': np.float64(2.1845695491899972), 'subsample': np.float64(0.7799016533479063)}
+2026-08-28 21:49:57 | eta_pipeline.model_training | INFO     |     xgboost | cv_rmse=4.995  val_rmse=4.709  val_r2=0.803  (120.5s)
+2026-08-28 21:50:25 | eta_pipeline.model_training | INFO     | 
+--- Leaderboard (sorted by val_rmse) ---
+2026-08-28 21:50:25 | eta_pipeline.model_training | INFO     | 
+            model  val_mae  val_rmse  val_r2
+          xgboost   3.0495    4.7087  0.8029
+gradient_boosting   3.0454    4.7281  0.8013
+    decision_tree   3.6980    5.5596  0.7253
+linear_regression   4.0709    6.0123  0.6787
+2026-08-28 21:50:27 | eta_pipeline.model_training | INFO     | Leaderboard comparison plot saved: leaderboard_comparison.png
+2026-08-28 21:50:27 | eta_pipeline.model_training | INFO     | 
+Champion model: xgboost (val_rmse=4.7087)
+2026-08-28 21:50:27 | eta_pipeline.model_training | INFO     | Evaluating champion 'xgboost' (val_rmse=4.7087) 
+2026-08-28 21:50:28 | eta_pipeline.model_training | INFO     |   test_rmse=4.984  test_r2=0.791
+2026-08-28 21:50:29 | eta_pipeline.mlflow_tracking | INFO     | Model registered: name='eta-best-model' version=2 from run=a63fc4c7df5c49e0a615b018202318d0
+2026-08-28 21:50:29 | eta_pipeline.mlflow_tracking | INFO     | Archived previous Production model version 1.
+2026-08-28 21:50:29 | eta_pipeline.mlflow_tracking | INFO     | Model 'eta-best-model' version 2 promoted to Production.
+2026-08-28 21:50:31 | eta_pipeline.model_training | INFO     | Leaderboard comparison plot saved: leaderboard_comparison.png
+2026-08-28 21:50:31 | main | INFO     | ================================================================
+2026-08-28 21:50:31 | main | INFO     | Title: PIPELINE COMPLETE
+2026-08-28 21:50:31 | main | INFO     | ================================================================
+2026-08-28 21:50:31 | main | INFO     |   Parent run ID        : 2eb130ad7bd74b62987e556d77fbf049
+2026-08-28 21:50:31 | main | INFO     |   Dataset version      : v6
+2026-08-28 21:50:31 | main | INFO     |   Train / Val / Test   : 69,839 / 9,977 / 19,955
+2026-08-28 21:50:31 | main | INFO     |   Features             : 34
+2026-08-28 21:50:31 | main | INFO     |   Scaler               : StandardScaler
+2026-08-28 21:50:31 | main | INFO     |   Encoder              : None
+2026-08-28 21:50:31 | main | INFO     |   Champion model       : xgboost
+2026-08-28 21:50:31 | main | INFO     |   Champion val RMSE    : 4.709 min
+2026-08-28 21:50:31 | main | INFO     |   Registry version     : 2
+2026-08-28 21:50:31 | main | INFO     |   Versioned artifacts  -> C:\Users\Ganesh\TripDurationPredictions\data\processed\versioned\v6
+2026-08-28 21:50:31 | main | INFO     |   Total elapsed time   : 263.5s
+2026-08-28 21:50:31 | main | INFO     | 
+2026-08-28 21:50:31 | main | INFO     |   MLflow UI: mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db                -> http://localhost:5000

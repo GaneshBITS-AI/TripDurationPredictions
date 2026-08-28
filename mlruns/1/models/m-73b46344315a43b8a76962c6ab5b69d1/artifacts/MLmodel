@@ -1,0 +1,58 @@
+artifact_path: file:C:/Users/Ganesh/TripDurationPredictions/mlruns/1/models/m-73b46344315a43b8a76962c6ab5b69d1/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.skops
+    predict_fn: predict
+    python_version: 3.13.5
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.9.0
+    skops_trusted_types: null
+is_signature_from_type_hint: false
+mlflow_version: 3.15.2
+model_id: m-73b46344315a43b8a76962c6ab5b69d1
+model_size_bytes: 3200798
+model_uuid: m-73b46344315a43b8a76962c6ab5b69d1
+prompts: null
+run_id: 49b9861c76f742df85983a4d2fa29d6f
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "vendor_id", "required": true}, {"type": "double",
+    "name": "passenger_count", "required": true}, {"type": "double", "name": "pickup_lon",
+    "required": true}, {"type": "double", "name": "pickup_lat", "required": true},
+    {"type": "double", "name": "dropoff_lon", "required": true}, {"type": "double",
+    "name": "dropoff_lat", "required": true}, {"type": "double", "name": "store_and_fwd_flag",
+    "required": true}, {"type": "double", "name": "avg_temp_f", "required": true},
+    {"type": "double", "name": "precipitation", "required": true}, {"type": "double",
+    "name": "snow_depth", "required": true}, {"type": "double", "name": "hour_of_day",
+    "required": true}, {"type": "double", "name": "day_of_week", "required": true},
+    {"type": "double", "name": "month", "required": true}, {"type": "double", "name":
+    "is_weekend", "required": true}, {"type": "double", "name": "is_rush_hour", "required":
+    true}, {"type": "double", "name": "hour_sin", "required": true}, {"type": "double",
+    "name": "hour_cos", "required": true}, {"type": "double", "name": "dow_sin", "required":
+    true}, {"type": "double", "name": "dow_cos", "required": true}, {"type": "double",
+    "name": "month_sin", "required": true}, {"type": "double", "name": "month_cos",
+    "required": true}, {"type": "double", "name": "haversine_km", "required": true},
+    {"type": "double", "name": "bearing_deg", "required": true}, {"type": "double",
+    "name": "bearing_sin", "required": true}, {"type": "double", "name": "bearing_cos",
+    "required": true}, {"type": "double", "name": "pickup_grid_x", "required": true},
+    {"type": "double", "name": "pickup_grid_y", "required": true}, {"type": "double",
+    "name": "dropoff_grid_x", "required": true}, {"type": "double", "name": "dropoff_grid_y",
+    "required": true}, {"type": "double", "name": "delta_lat", "required": true},
+    {"type": "double", "name": "delta_lon", "required": true}, {"type": "double",
+    "name": "log_haversine_km", "required": true}, {"type": "double", "name": "is_snowing",
+    "required": true}, {"type": "double", "name": "is_raining", "required": true}]'
+  outputs: '[{"type": "double", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-08-28 16:17:43.612268'
