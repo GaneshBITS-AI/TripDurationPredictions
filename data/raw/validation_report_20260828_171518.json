@@ -1,0 +1,12 @@
+{
+  "total_rows": 100000,
+  "missing_gps_rows": 0,
+  "invalid_timestamp_rows": 0,
+  "out_of_range_rows": 94,
+  "negative_eta_rows": 135,
+  "invalid_passenger_rows": 1,
+  "duplicate_trip_ids": 0,
+  "clean_rows": 99771,
+  "quarantine_rows": 229,
+  "schema_errors": []
+}
