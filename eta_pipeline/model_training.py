@@ -16,8 +16,9 @@ import mlflow.sklearn
 import sklearn
 
 from scipy.stats import randint, uniform
-from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import RandomizedSearchCV
 
@@ -88,19 +89,19 @@ def _build_model_catalogue() -> Dict[str, Tuple[Any, Dict]]:
         {"fit_intercept": [True, False]},
     )
 
-    # 2. Random Forest
-    # n_jobs=1 here: RandomizedSearchCV below already parallelizes across all
-    # cores (n_jobs=-1). Letting the estimator also spawn n_jobs=-1 threads
-    # per fit oversubscribes the CPU (n_search_workers x n_forest_threads)
-    # and slows training down rather than speeding it up.
-    catalogue["random_forest"] = (
-        RandomForestRegressor(random_state=config.RANDOM_SEED, n_jobs=1),
+    # 2. Decision Tree - a single tree fits in a fraction of the time a
+    # Random Forest's 100-500 bagged trees take, while still being a
+    # non-linear model distinct from Linear Regression for comparison.
+    # ccp_alpha (cost-complexity pruning) keeps a single unbounded tree from
+    # just overfitting the training split.
+    catalogue["decision_tree"] = (
+        DecisionTreeRegressor(random_state=config.RANDOM_SEED),
         {
-            "n_estimators":      randint(100, 500),
-            "max_depth":         [None, 10, 20, 30],
-            "min_samples_split": randint(2, 10),
-            "min_samples_leaf":  randint(1, 6),
-            "max_features":      ["sqrt", "log2", 0.5, 0.8],
+            "max_depth":         [None, 5, 10, 15, 20, 30],
+            "min_samples_split": randint(2, 20),
+            "min_samples_leaf":  randint(1, 20),
+            "max_features":      ["sqrt", "log2", None, 0.5, 0.8],
+            "ccp_alpha":         uniform(0.0, 0.01),
         },
     )
 

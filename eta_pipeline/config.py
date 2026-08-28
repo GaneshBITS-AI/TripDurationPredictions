@@ -112,7 +112,7 @@ MLFLOW_REGISTERED_MODEL = "eta-best-model"
 MLFLOW_PRODUCTION_STAGE = "Production"
 
 # Models to train and compare
-MODEL_CANDIDATES = ["linear_regression", "random_forest", "gradient_boosting", "xgboost"]
+MODEL_CANDIDATES = ["linear_regression", "decision_tree", "gradient_boosting", "xgboost"]
 
 # Metric used to select the best model (lower is better)
 CHAMPION_METRIC = "val_rmse"
