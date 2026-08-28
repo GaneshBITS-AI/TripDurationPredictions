@@ -15,13 +15,17 @@ Usage
 
 from __future__ import annotations
 
+import os
 from datetime import date, time as dtime
 
 import pandas as pd
 import requests
 import streamlit as st
 
-DEFAULT_API_URL = "http://localhost:8000"
+# API_URL lets docker-compose point this at the `api` service by container
+# name (e.g. http://api:8000) instead of localhost, since each container
+# has its own network namespace.
+DEFAULT_API_URL = os.environ.get("API_URL", "http://localhost:8000")
 
 st.set_page_config(page_title="ETA Prediction", page_icon="🚕", layout="centered")
 

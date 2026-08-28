@@ -1,0 +1,18 @@
+# Runs the full ingestion -> EDA -> preprocessing -> training pipeline once
+# and exits. Not a long-running service - see docker-compose.yml's `train`
+# service (profile "train").
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# libgomp1: OpenMP runtime required by xgboost on Debian slim images.
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY docker/requirements/train.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY eta_pipeline/ ./eta_pipeline/
+COPY main.py .
+
+ENTRYPOINT ["python", "main.py"]

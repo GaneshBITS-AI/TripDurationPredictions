@@ -1,0 +1,11 @@
+.venv/
+.git/
+.idea/
+.claude/
+__pycache__/
+*.pyc
+data/
+mlruns/
+eda_outputs/
+logs/
+*.db

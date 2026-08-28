@@ -1,0 +1,66 @@
+# Three independently-built, independently-runnable services:
+#   train      - one-shot pipeline run (ingestion -> ... -> registry promotion)
+#   api        - FastAPI prediction service
+#   streamlit  - UI, talks to `api` over the compose network
+#   mlflow-ui  - optional, browses the same tracking store as `train`/`api`
+#
+# `mlruns` is a Docker-managed named volume, deliberately NOT a bind mount
+# of the repo's existing ./mlruns/ - that SQLite store already has runs
+# registered with an absolute Windows host path baked into each
+# experiment's artifact_location (e.g. file:C:/Users/.../mlruns/1), which
+# does not exist inside a Linux container and would break model loading.
+# Run `docker compose --profile train run --rm train` once first to
+# populate a fresh, container-native registry before starting `api`.
+#
+# `data/` IS bind-mounted: versioned datasets and the scaler/metadata the
+# API reads are addressed by relative path (config.py resolves everything
+# from its own file location), so there's no equivalent portability issue
+# there, and bind-mounting keeps them visible/inspectable on the host.
+
+services:
+  train:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.train
+    volumes:
+      - ./data:/app/data
+      - mlruns_data:/app/mlruns
+    profiles: ["train"]
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - mlruns_data:/app/mlruns
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.streamlit
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: "http://api:8000"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  mlflow-ui:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.train
+    entrypoint: ["mlflow"]
+    command: ["ui", "--backend-store-uri", "sqlite:///mlruns/mlflow.db", "--host", "0.0.0.0", "--port", "5000"]
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlruns_data:/app/mlruns
+    profiles: ["ui"]
+
+volumes:
+  mlruns_data:

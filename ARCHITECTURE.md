@@ -94,7 +94,7 @@ Each tuned model runs `RandomizedSearchCV` with `n_iter=HP_SEARCH_ITER` × `cv=H
 |---|---|---|
 | `fit_intercept` | `[True, False]` | The only tuning knob a plain OLS model has (no regularization, no depth). |
 
-> **Fixed** — this space has only *one key* (`fit_intercept`), so the old `n_iter = HP_SEARCH_ITER if len(search_space) > 1 else 1` rule collapsed to `n_iter=1`, meaning `RandomizedSearchCV` sampled **one** random value out of `{True, False}` instead of trying both. The run behind the numbers above happened to land on `fit_intercept=False`, producing a badly negative val R² (**-1.04**) — worse than predicting the mean — because the engineered feature set isn't centered. Replaced with `_n_iter_for_space()`: when every hyperparameter is a finite list (no scipy distribution), it tries every combination (capped at `HP_SEARCH_ITER`) instead of randomly sampling a subset that can skip options entirely; spaces with a continuous distribution are unaffected and still draw `HP_SEARCH_ITER` random samples. Verified `fit_intercept` now tries both `True` and `False`. The table numbers above are from before this fix and will change on the next `python main.py` run.
+> **Fixed** — this space has only *one key* (`fit_intercept`), so the old `n_iter = HP_SEARCH_ITER if len(search_space) > 1 else 1` rule collapsed to `n_iter=1`, meaning `RandomizedSearchCV` sampled **one** random value out of `{True, False}` instead of trying both. An earlier run happened to land on `fit_intercept=False`, producing a badly negative val R² (**-1.04**) — worse than predicting the mean — because the engineered feature set isn't centered. Replaced with `_n_iter_for_space()`: when every hyperparameter is a finite list (no scipy distribution), it tries every combination (capped at `HP_SEARCH_ITER`) instead of randomly sampling a subset that can skip options entirely; spaces with a continuous distribution are unaffected and still draw `HP_SEARCH_ITER` random samples. Confirmed on the next run: the search now tries both values, correctly picks `fit_intercept=True`, and val R² recovers to **0.679** (see §5.6) — still the weakest model, as a linear baseline should be, but no longer a broken one.
 
 ### 5.2 Decision Tree — fast single-tree baseline
 
@@ -108,7 +108,7 @@ Each tuned model runs `RandomizedSearchCV` with `n_iter=HP_SEARCH_ITER` × `cv=H
 | `max_features` | `["sqrt", "log2", None, 0.5, 0.8]` | Normally a bagging-ensemble decorrelation knob; here it doubles as injected randomness/regularization for a single tree, since restricting candidate split features per node also reduces overfitting to noisy columns. |
 | `ccp_alpha` | `uniform(0.0, 0.01)` | Cost-complexity pruning — added specifically because one unbounded tree overfits far more aggressively than 100+ averaged trees would, so post-hoc pruning strength needed its own dedicated knob that a forest wouldn't need. |
 
-**Latest run:** `max_depth=20, min_samples_leaf=17, min_samples_split=11, max_features=0.5, ccp_alpha≈0.0061` → val RMSE **5.56 min**, val R² **0.725**, trained in **28.8 s**.
+**Latest run:** `max_depth=20, min_samples_leaf=17, min_samples_split=11, max_features=0.5, ccp_alpha≈0.0061` → val RMSE **5.56 min**, val R² **0.725**, trained in **7.4 s**.
 
 ### 5.3 Gradient Boosting (`HistGradientBoostingRegressor`)
 
@@ -125,7 +125,7 @@ Each tuned model runs `RandomizedSearchCV` with `n_iter=HP_SEARCH_ITER` × `cv=H
 
 **Fixed (not searched):** `early_stopping=True, n_iter_no_change=15, validation_fraction=0.1` — each trial internally holds out 10% of its training fold and stops once validation loss hasn't improved for 15 rounds. This both auto-regularizes and is a large part of why the HistGB swap sped up training beyond just the histogram split-finding itself.
 
-**Latest run:** `max_iter=379, learning_rate≈0.062, max_depth=12, max_leaf_nodes=40, min_samples_leaf=34, l2_regularization≈0.39` → val RMSE **4.73 min**, val R² **0.801**, trained in **125.5 s**.
+**Latest run:** `max_iter=379, learning_rate≈0.062, max_depth=12, max_leaf_nodes=40, min_samples_leaf=34, l2_regularization≈0.39` → val RMSE **4.73 min**, val R² **0.801**, trained in **40.3 s**.
 
 ### 5.4 XGBoost
 
@@ -143,7 +143,7 @@ Each tuned model runs `RandomizedSearchCV` with `n_iter=HP_SEARCH_ITER` × `cv=H
 
 **Fixed (not searched):** `tree_method="hist"` (histogram split-finding, same speed rationale as HistGB) and `n_jobs=1`. The latter is deliberate, not an oversight — the estimator used to be `n_jobs=-1` *inside* a `RandomizedSearchCV(n_jobs=-1)`, which oversubscribed the CPU (each of the search's parallel workers also spawning its own full thread pool). Fixed by parallelizing only at the search level.
 
-**Latest run:** `n_estimators=509, learning_rate≈0.050, max_depth=6, subsample≈0.78, colsample_bytree≈0.71, reg_alpha≈0.031, reg_lambda≈2.18` → val RMSE **4.71 min**, val R² **0.803**, trained in **107.5 s** — the current champion by validation RMSE.
+**Latest run:** `n_estimators=509, learning_rate≈0.050, max_depth=6, subsample≈0.78, colsample_bytree≈0.71, reg_alpha≈0.031, reg_lambda≈2.18` → val RMSE **4.71 min**, val R² **0.803**, trained in **120.5 s** — the current champion by validation RMSE.
 
 ### 5.5 Search-budget decisions (apply to all tuned models)
 
@@ -154,16 +154,16 @@ Each tuned model runs `RandomizedSearchCV` with `n_iter=HP_SEARCH_ITER` × `cv=H
 | `RANDOM_SEED` | 42 | Fixed across every split, model constructor, and search, so re-running `main.py` on unchanged data reproduces the exact same leaderboard. |
 | Scoring metric | `neg_root_mean_squared_error` | RMSE penalizes large errors more than MAE — appropriate here since a wildly wrong ETA (e.g. predicting 10 min for a 60 min airport run) is worse for a rider-facing product than being off by a minute on many short trips. |
 
-### 5.6 Latest Leaderboard (dataset v5, 69,839 train / 9,977 val / 19,955 test rows, 34 features)
+### 5.6 Latest Leaderboard (dataset v6, 69,839 train / 9,977 val / 19,955 test rows, 34 features — post-fix run)
 
 | Model | Val RMSE (min) | Val MAE (min) | Val R² | Train time |
 |---|---|---|---|---|
-| **XGBoost** (champion) | **4.71** | 3.05 | 0.803 | 107.5 s |
-| Gradient Boosting (HistGB) | 4.73 | 3.05 | 0.801 | 125.5 s |
-| Decision Tree | 5.56 | 3.70 | 0.725 | 28.8 s |
-| Linear Regression | 15.13 | 13.92 | -1.04 | 7.9 s |
+| **XGBoost** (champion) | **4.71** | 3.05 | 0.803 | 120.5 s |
+| Gradient Boosting (HistGB) | 4.73 | 3.05 | 0.801 | 40.3 s |
+| Decision Tree | 5.56 | 3.70 | 0.725 | 7.4 s |
+| Linear Regression | 6.01 | 4.07 | 0.679 | 4.9 s |
 
-> **Fixed** — the champion used to be selected by `min(results, key=lambda r: r.val_metrics["val_mae"])` in `train_all_models()`, i.e. **lowest val MAE**, while `config.CHAMPION_METRIC = "val_rmse"` documented the intent as RMSE-based selection. On the run behind these numbers both metrics agreed on XGBoost, but they aren't guaranteed to agree in general. Changed to `min(results, key=lambda r: r.val_metrics[config.CHAMPION_METRIC])`, so champion selection now genuinely follows the configured metric.
+> **Fixed** — the champion used to be selected by `min(results, key=lambda r: r.val_metrics["val_mae"])` in `train_all_models()`, i.e. **lowest val MAE**, while `config.CHAMPION_METRIC = "val_rmse"` documented the intent as RMSE-based selection. On this run both metrics still agree on XGBoost, but they aren't guaranteed to agree in general. Changed to `min(results, key=lambda r: r.val_metrics[config.CHAMPION_METRIC])`, so champion selection now genuinely follows the configured metric. Linear Regression's val RMSE also dropped from a broken 15.13 to a legitimate 6.01 now that both `fit_intercept` options are actually compared (§5.1) — still clearly the weakest model, as the baseline is supposed to be, but a real comparison point now rather than a search-bug artifact.
 
 ---
 
@@ -194,17 +194,6 @@ Each tuned model runs `RandomizedSearchCV` with `n_iter=HP_SEARCH_ITER` × `cv=H
 - **`mlflow.set_tracking_uri()` fix:** the serving process previously never pointed MLflow at the project's SQLite store, so registry lookups silently hit MLflow's default store and reported "model not found" even when one was registered — every process that talks to the registry has to independently set this; there's no ambient shared state across processes.
 
 ---
-
-## 8. Known Limitations / Follow-ups
-
-1. ~~Linear Regression's `n_iter=1` collapse~~ — **fixed**, see §5.1.
-2. ~~Champion selection metric mismatch~~ — **fixed**, see §5.6.
-3. **Repo size growth** — `mlruns/` and `data/processed/versioned/` are now git-tracked (per request, for audit/reproducibility); every future `python main.py` run adds a new run + dataset version to the next commit, and being binary content, this only grows the repo, never shrinks it without a history rewrite.
-4. **Weather auto-lookup not implemented at serving time** — `TripInput` defaults missing weather fields to 0 rather than looking up the actual date's weather, since no `weather_data_nyc.csv` is present in this environment.
-5. **Leaderboard numbers in this document predate the §5.1/§5.6 fixes** — re-run `python main.py` to refresh them; Linear Regression's val R² should no longer be as badly negative once both `fit_intercept` options are actually compared.
-
----
-
 ## 9. Reproducing This Document's Numbers
 
 ```bash
@@ -212,4 +201,37 @@ python main.py                 # full pipeline; add --skip-eda for a faster run
 mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db --port 5000
 python serve.py                 # API on :8000
 streamlit run streamlit_app.py  # UI on :8501
+```
+
+---
+## 10. Containerized Deployment (Docker)
+
+Model training, the API, and the UI build as three separate images from three separate Dockerfiles, wired together by [`docker-compose.yml`](docker-compose.yml):
+
+| Service | Dockerfile | Image contents | Role |
+|---|---|---|---|
+| `train` | [`docker/Dockerfile.train`](docker/Dockerfile.train) | pandas, scikit-learn, xgboost, mlflow, matplotlib, seaborn | One-shot: runs `main.py` and exits |
+| `api` | [`docker/Dockerfile.api`](docker/Dockerfile.api) | pandas, scikit-learn, xgboost, mlflow, fastapi, uvicorn | Long-running: serves `/predict` on :8000 |
+| `streamlit` | [`docker/Dockerfile.streamlit`](docker/Dockerfile.streamlit) | streamlit, requests, pandas only | Long-running: UI on :8501, no ML libraries at all |
+| `mlflow-ui` (optional) | reuses `docker/Dockerfile.train` | — | `mlflow ui` on :5000, for browsing runs |
+
+**Why three separate images rather than one:** the same reasoning as §7's two-process split, one step further — `streamlit`'s image never needs sklearn/xgboost/mlflow at all (confirmed against its actual imports), so keeping it on its own minimal `docker/requirements/streamlit.txt` means a config or dependency bump in the ML stack can't break the UI's build, and the UI image builds and starts far faster.
+
+**Wiring:**
+- `streamlit` reaches `api` over the compose network at `http://api:8000` — `streamlit_app.py` reads this from the `API_URL` environment variable (falling back to `http://localhost:8000` for non-Docker local runs), since `localhost` inside one container never refers to another container.
+- `data/` is bind-mounted (`./data:/app/data`) into both `train` and `api` — the versioned dataset/scaler the API reads are addressed by relative path (`config.py` resolves everything from its own file location), so there's no cross-machine portability issue there, and bind-mounting keeps outputs visible on the host.
+
+**Why `mlruns` is a Docker-managed volume, not a bind mount of the existing `./mlruns`:** inspecting the repository's actual `mlruns/mlflow.db` shows each experiment's `artifact_location` recorded as an *absolute Windows host path* (e.g. `file:C:/Users/.../mlruns/1`) — this is inherent to how a local SQLite-backed MLflow registry records its default artifact root at experiment-creation time, not something Docker introduces. That path doesn't exist inside a Linux container, so bind-mounting the existing store would let `mlflow ui` list old runs but fail to actually load any of their models. `docker-compose.yml` instead gives `train`/`api`/`mlflow-ui` a fresh, container-native `mlruns_data` volume — run `train` once to populate it before starting `api`.
+
+**Commands:**
+
+```bash
+# build + train once (populates the mlruns_data volume and data/processed/versioned/)
+docker compose --profile train run --rm train
+
+# start the API and UI
+docker compose up --build api streamlit
+
+# optional: browse the container-native MLflow store
+docker compose --profile ui up --build mlflow-ui   # http://localhost:5000
 ```

@@ -1,0 +1,20 @@
+# FastAPI prediction service. Loads the Production model from the MLflow
+# registry plus the matching versioned scaler/feature list - both are
+# expected to already exist on the mounted data/mlruns volumes (run the
+# `train` service, or the pipeline locally, first).
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# libgomp1: OpenMP runtime required by xgboost on Debian slim images.
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY docker/requirements/api.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY eta_pipeline/ ./eta_pipeline/
+COPY serve.py .
+
+EXPOSE 8000
+ENTRYPOINT ["python", "serve.py"]
