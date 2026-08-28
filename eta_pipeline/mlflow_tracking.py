@@ -37,6 +37,7 @@ def start_pipeline_run(run_name: str) -> Generator[mlflow.ActiveRun, None, None]
         mlflow.set_tag("pipeline.stage", "orchestration")
         mlflow.set_tag("pipeline.version", "1.0.0")
         log.info(f"MLflow parent run started: {run.info.run_id}")
+        yield run
 
 def log_ingestion_metrics(report) -> None:
     mlflow.set_tag("stage", "ingestion")
@@ -124,7 +125,7 @@ def log_dataset_artifact(version: str) -> None:
 def log_eda_artifacts() -> None:
     """Log all EDA PNG plots and summary JSON as MLflow artifacts."""
 
-    eda_dir = Path(config.REPORTS_DIR) / "eda"
+    eda_dir = Path(config.REPORT_DIR) / "eda"
 
     if eda_dir.exists():
         mlflow.log_artifacts(

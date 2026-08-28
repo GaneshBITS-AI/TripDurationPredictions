@@ -27,10 +27,10 @@ KAGGLE_COLUMN_MAP = {
     "pickup_datetime" : "pickup_datetime",
     "dropoff_datetime" : "dropoff_datetime",
     "passenger_count": "passenger_count",
-    "pickup_longitude": "pickup_long",
+    "pickup_longitude": "pickup_lon",
     "pickup_latitude": "pickup_lat",
     "dropoff_latitude": "dropoff_lat",
-    "dropoff_longitude": "dropoff_long",
+    "dropoff_longitude": "dropoff_lon",
     "store_and_fwd_flag": "store_and_fwd_flag",
     "trip_duration": "trip_duration_sec"
 }
@@ -40,10 +40,10 @@ REQUIRED_COLUMNS = [
     "pickup_datetime",
     "dropoff_datetime",
     "passenger_count",
-    "pickup_long",
+    "pickup_lon",
     "pickup_lat",
     "dropoff_lat",
-    "dropoff_long",
+    "dropoff_lon",
     "vendor_id",
     "eta_minutes",
 ]
