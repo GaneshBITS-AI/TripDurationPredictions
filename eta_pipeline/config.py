@@ -119,6 +119,6 @@ CHAMPION_METRIC = "val_rmse"
 
 # ---------------------------- Hyperparameter search ----------------------------
 # Number of random parameter combinations to try per model family
-HP_SEARCH_ITER = 20
+HP_SEARCH_ITER = 12
 # Cross-validation folds used during search (applied on train split only)
 HP_CV_FOLDS = 3

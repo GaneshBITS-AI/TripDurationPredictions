@@ -16,7 +16,7 @@ import mlflow.sklearn
 import sklearn
 
 from scipy.stats import randint, uniform
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import RandomizedSearchCV
@@ -89,8 +89,12 @@ def _build_model_catalogue() -> Dict[str, Tuple[Any, Dict]]:
     )
 
     # 2. Random Forest
+    # n_jobs=1 here: RandomizedSearchCV below already parallelizes across all
+    # cores (n_jobs=-1). Letting the estimator also spawn n_jobs=-1 threads
+    # per fit oversubscribes the CPU (n_search_workers x n_forest_threads)
+    # and slows training down rather than speeding it up.
     catalogue["random_forest"] = (
-        RandomForestRegressor(random_state=config.RANDOM_SEED, n_jobs=-1),
+        RandomForestRegressor(random_state=config.RANDOM_SEED, n_jobs=1),
         {
             "n_estimators":      randint(100, 500),
             "max_depth":         [None, 10, 20, 30],
@@ -101,14 +105,25 @@ def _build_model_catalogue() -> Dict[str, Tuple[Any, Dict]]:
     )
 
     # 3. Gradient Boosting
+    # HistGradientBoostingRegressor instead of GradientBoostingRegressor:
+    # histogram-binned splits make it an order of magnitude faster to fit on
+    # tens of thousands of rows, and early_stopping lets a trial quit once
+    # the internal validation loss stops improving instead of always running
+    # to max_iter.
     catalogue["gradient_boosting"] = (
-        GradientBoostingRegressor(random_state=config.RANDOM_SEED),
+        HistGradientBoostingRegressor(
+            random_state=config.RANDOM_SEED,
+            early_stopping=True,
+            n_iter_no_change=15,
+            validation_fraction=0.1,
+        ),
         {
-            "n_estimators":      randint(200, 600),
-            "learning_rate":     uniform(0.01, 0.19),
-            "max_depth":         randint(3, 8),
-            "subsample":         uniform(0.6, 0.4),
-            "min_samples_split": randint(2, 8),
+            "max_iter":           randint(100, 400),
+            "learning_rate":      uniform(0.01, 0.19),
+            "max_depth":          [None, 3, 5, 8, 12],
+            "max_leaf_nodes":     randint(15, 63),
+            "min_samples_leaf":   randint(10, 50),
+            "l2_regularization":  uniform(0, 1.0),
         },
     )
 
@@ -117,7 +132,7 @@ def _build_model_catalogue() -> Dict[str, Tuple[Any, Dict]]:
         catalogue["xgboost"] = (
             XGBRegressor(
                 random_state=config.RANDOM_SEED,
-                n_jobs=-1,
+                n_jobs=1,  # avoid double parallelism, see random_forest above
                 tree_method="hist",
                 verbosity=0,
             ),
