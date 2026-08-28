@@ -1,12 +1,2 @@
 __pycache__/
 *.pyc
-
-mlruns/
-
-data/processed/logs/
-data/processed/models/
-data/processed/report/
-data/processed/versioned/
-data/raw/trips_clean_*.parquet
-data/raw/trips_quarantine_*.parquet
-data/raw/validation_report_*.json

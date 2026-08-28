@@ -1,0 +1,152 @@
+{
+  "n_rows": 9979,
+  "n_columns": 15,
+  "missing_values": {
+    "trip_id": 0,
+    "vendor_id": 0,
+    "pickup_datetime": 0,
+    "dropoff_datetime": 0,
+    "passenger_count": 0,
+    "pickup_lon": 0,
+    "pickup_lat": 0,
+    "dropoff_lon": 0,
+    "dropoff_lat": 0,
+    "store_and_fwd_flag": 0,
+    "trip_duration_sec": 0,
+    "eta_minutes": 0,
+    "avg_temp_f": 0,
+    "precipitation": 0,
+    "snow_depth": 0
+  },
+  "dtypes": {
+    "trip_id": "object",
+    "vendor_id": "Int64",
+    "pickup_datetime": "datetime64[ns]",
+    "dropoff_datetime": "datetime64[ns]",
+    "passenger_count": "Int64",
+    "pickup_lon": "float64",
+    "pickup_lat": "float64",
+    "dropoff_lon": "float64",
+    "dropoff_lat": "float64",
+    "store_and_fwd_flag": "object",
+    "trip_duration_sec": "int64",
+    "eta_minutes": "float64",
+    "avg_temp_f": "float64",
+    "precipitation": "float64",
+    "snow_depth": "float64"
+  },
+  "descriptive_stats": {
+    "vendor_id": {
+      "count": 9979.0,
+      "mean": 1.5298,
+      "std": 0.4991,
+      "min": 1.0,
+      "25%": 1.0,
+      "50%": 2.0,
+      "75%": 2.0,
+      "max": 2.0
+    },
+    "passenger_count": {
+      "count": 9979.0,
+      "mean": 1.6686,
+      "std": 1.3175,
+      "min": 1.0,
+      "25%": 1.0,
+      "50%": 1.0,
+      "75%": 2.0,
+      "max": 6.0
+    },
+    "pickup_lon": {
+      "count": 9979.0,
+      "mean": -73.9733,
+      "std": 0.0384,
+      "min": -74.2099,
+      "25%": -73.9918,
+      "50%": -73.9819,
+      "75%": -73.9667,
+      "max": -73.7562
+    },
+    "pickup_lat": {
+      "count": 9979.0,
+      "mean": 40.7511,
+      "std": 0.0279,
+      "min": 40.6128,
+      "25%": 40.7376,
+      "50%": 40.7545,
+      "75%": 40.7683,
+      "max": 40.8744
+    },
+    "dropoff_lon": {
+      "count": 9979.0,
+      "mean": -73.9732,
+      "std": 0.0354,
+      "min": -74.2099,
+      "25%": -73.9913,
+      "50%": -73.9796,
+      "75%": -73.9625,
+      "max": -73.7115
+    },
+    "dropoff_lat": {
+      "count": 9979.0,
+      "mean": 40.7517,
+      "std": 0.032,
+      "min": 40.5743,
+      "25%": 40.7352,
+      "50%": 40.7544,
+      "75%": 40.7701,
+      "max": 40.8964
+    },
+    "trip_duration_sec": {
+      "count": 9979.0,
+      "mean": 824.8743,
+      "std": 637.8955,
+      "min": 2.0,
+      "25%": 395.0,
+      "50%": 657.0,
+      "75%": 1059.0,
+      "max": 6928.0
+    },
+    "eta_minutes": {
+      "count": 9979.0,
+      "mean": 13.7479,
+      "std": 10.6316,
+      "min": 0.0333,
+      "25%": 6.5833,
+      "50%": 10.95,
+      "75%": 17.65,
+      "max": 115.4667
+    },
+    "avg_temp_f": {
+      "count": 9979.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "25%": 0.0,
+      "50%": 0.0,
+      "75%": 0.0,
+      "max": 0.0
+    },
+    "precipitation": {
+      "count": 9979.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "25%": 0.0,
+      "50%": 0.0,
+      "75%": 0.0,
+      "max": 0.0
+    },
+    "snow_depth": {
+      "count": 9979.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "25%": 0.0,
+      "50%": 0.0,
+      "75%": 0.0,
+      "max": 0.0
+    }
+  },
+  "target_skewness": 2.1621231640131153,
+  "target_kurtosis": 7.77123691711725
+}
