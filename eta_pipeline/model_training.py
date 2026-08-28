@@ -405,6 +405,7 @@ def train_all_models(
         champ_model =  mlflow.sklearn.load_model(model_uri)
         test_pred  = champ_model.predict(X_test)
         test_metrics = _compute_metrics(y_test.to_numpy(), test_pred, "test")
+        champion.test_metrics = test_metrics
         mlflow.log_metrics(test_metrics)
         mlflow.set_tag("is_champion", "true")
 
@@ -419,7 +420,7 @@ def train_all_models(
         )
         champion.registered_ver = registered_ver
         promote_to_production(
-            model_name=config.MLFLOW_REGISTERED_MODEL,
+            registered_name=config.MLFLOW_REGISTERED_MODEL,
             version=registered_ver,
             archive_existing=True
         )
